@@ -1,7 +1,7 @@
 -- create table
 -- create table nasabah
 create table nasabah(
-	id bigserial not null,
+	id uuid default gen_random_uuid(),
 	name varchar(255) not null,
 	address varchar not null,
 	phone varchar(14) not null,
@@ -18,8 +18,8 @@ create table account_type(
 
 -- create table akun
 create table akun(
-	id bigserial not null,
-	id_nasabah bigserial,
+	id uuid default gen_random_uuid(),
+	id_nasabah uuid not null,
 	id_account_type bigserial,
 	balance bigint not null,
 	constraint pk_akun primary key (id),
@@ -33,8 +33,8 @@ create type type_status as enum('success','pending','fail');
 
 -- create table transaksi
 create table transaksi(
-	id bigserial not null,
-	id_akun bigserial,
+	id uuid default gen_random_uuid(),
+	id_akun uuid not null,
 	time timestamp default current_timestamp not null,
 	type type_transaksi not null,
 	balance bigint default 0 not null,
@@ -71,40 +71,76 @@ values
 -- insert into table akun
 insert into akun(id_nasabah, id_account_type, balance)
 values 
-	(1, 5, 15500000),
-	(2, 4, 22750000),
-	(3, 3, 8200000),
-	(4, 2, 12500000),
-	(5, 1, 17300000),
-	(6, 1, 25600000),
-	(7, 2, 14750000),
-	(8, 3, 19850000),
-	(9, 4, 11400000),
-	(10, 5, 23900000);
-	
--- insert into table transaksi
-insert into transaksi (type, balance, status)
-values 
-	('deposit', '100000', 'success'),
-	('withdraw', '200000', 'pending'),
-	('withdraw', '5000000000', 'fail'),
-	('deposit', '350000', 'success'),
-	('deposit', '1500000', 'success');
+	('bbe3585f-d8a5-4bc1-976a-b5a222efe71a', 1, 15500000),
+	('444cfd5d-5ff9-4d8b-b971-29c10e49a670', 2, 22750000),
+	('b5125855-1ab5-463b-8be0-95cd04cb7fab', 3, 8200000),
+	('818f403d-8c2d-4a26-805a-e10ac9221b85', 4, 12500000),
+	('5c294c08-0e42-4a6a-9cab-f8b6d12358cb', 5, 17300000),
+	('b857d137-7f88-449d-b87e-7b55ae9db762', 5, 25600000),
+	('1c86cb67-c16a-4003-a3f8-d6c0f0530bd0', 4, 14750000),
+	('2f24cbbe-1785-4ff8-865c-6d7cacc7502a', 3, 19850000),
+	('ef4c3267-979c-4928-83f0-b9d1b0d02c3c', 2, 11400000),
+	('c78d01d4-6e81-465e-8389-e3a29adb853f', 1, 23900000);
 
+-- insert into table transaksi
+insert into transaksi(id_akun, type, balance, status)
+values 
+	('052fd311-a76d-49aa-9d78-585948304052', 'deposit', '100000', 'success'),
+	('0d056100-d299-4247-ba03-fd708d4cbba9', 'withdraw', '200000', 'pending'),
+	('5dc99cc2-231d-42a2-a59f-2afd4c4ff13d','withdraw', '5000000000', 'fail'),
+	('6a7ebba7-7aa1-4de6-83c1-c340fad49636','deposit', '350000', 'success'),
+	('c667d014-d3bf-4a3f-9737-df22a6b00f55','deposit', '1500000', 'success');
+
+-- read data
 -- read each table data
 select * from nasabah;
 select * from account_type;
 select * from akun;
 select * from transaksi;
 
+-- read data id nasabah, their name, their account type and their balance.
+select 
+	n.id as nasabah_id,
+	n.name as nasabah_name,
+	at.name as type_account,
+	a.balance as account_balance
+from 
+	nasabah n
+join 
+	akun a on n.id = a.id_nasabah
+join 
+	account_type at on at.id = a.id_account_type;
+
+
+-- read name, account type, amount and the status of transaction, which has withdraw their balance more than 1 million
+select 
+	n.name as nasabah_name,
+	at.name as type_account,
+	t.type as transaction_action,
+	t.status as transaction_status
+from 
+	nasabah n
+join 
+	akun a on n.id = a.id_nasabah
+join 
+	account_type at on at.id = a.id_account_type
+join 
+	transaksi t on t.id_akun = a.id
+where 
+	t.type = 'withdraw' and t.balance < 1000000;
+
 -- update data
+-- update data nasabah name from table nasabah
 update nasabah 
 set
 	name = 'Lucas Old'
 where
-	id = 10;
-	
+	id = 'c78d01d4-6e81-465e-8389-e3a29adb853f';
+
+
+
 -- delete data
+-- delete data from table transaksi
 delete from transaksi
 where 
-	id = 5;
+	id = 'e39940fe-9a0d-4bed-a6d8-a1ec9c0b5c0a';
