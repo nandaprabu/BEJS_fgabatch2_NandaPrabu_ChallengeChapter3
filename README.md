@@ -21,7 +21,7 @@ This table stores information about the different types of accounts available at
 This table stores information about the accounts held by customers.
 #### Columns :
 - `id` (PK) : Unique ID for each account.
-- 'id_nasabah` (FK) : ID of the customer who owns the account.
+- `id_nasabah` (FK) : ID of the customer who owns the account.
 - `id_account_type` (FK) : ID of the account type.
 - `balance` : Current balance in the account.
 
