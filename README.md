@@ -37,7 +37,7 @@ This table stores the history of all transactions that occur in each account.
 
 ## Table Relationships
 1. Nasabah to Akun : One customer can have multiple accounts (One-to-Many).
-2. Account_Type Types to Accounts: One account type can be associated with multiple accounts (One-to-Many).
+2. Account_Type to Akun : One account type can be associated with multiple accounts (One-to-Many).
 3. Akun to Transaksi: One account can have multiple transactions (One-to-Many).
 
 # Entity Relationship Diagram
